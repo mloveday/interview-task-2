@@ -10,6 +10,7 @@ name = "interview-task-2"
 db_name = "interview_task_2"
 ip_address_web = "192.168.2.1"
 ip_address_redis = "192.168.2.2"
+ip_address_rabbitmq = "192.168.2.3"
 
 Vagrant.configure("2") do |config|
   # Set the VM provider
@@ -120,5 +121,29 @@ Vagrant.configure("2") do |config|
     end
 
     redis.vm.provision "shell", path: "init.sh"
+  end
+
+  config.vm.define "rabbitmq" do |rabbitmq|
+    rabbitmq.vm.box = "ubuntu/bionic64"
+    rabbitmq.vm.network "forwarded_port", guest: 5672, host: 5672
+    rabbitmq.vm.network "forwarded_port", guest: 15672, host: 15672
+    rabbitmq.vm.network "private_network", ip: ip_address_rabbitmq
+    # TODO: check all of this shell script is necessary, particularly getting the keys and updating apt
+    rabbitmq.vm.provision "shell", inline: <<-SHELL
+      sudo apt-key adv --keyserver "hkps.pool.sks-keyservers.net" --recv-keys "0x6B73A36E6026DFCA"
+      sudo apt-get install apt-transport-https
+      sudo apt-get update -y
+      echo 'deb http://www.rabbitmq.com/debian/ testing main' >/etc/apt/sources.list.d/rabbitmq.list
+      wget -O - "https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc" | sudo apt-key add -
+      wget http://www.rabbitmq.com/rabbitmq-signing-key-public.asc | apt-key add -
+      wget -O - "https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey" | sudo apt-key add -
+      apt-get update
+      apt-get install -q -y rabbitmq-server
+      rabbitmq-plugins enable rabbitmq_management
+      rabbitmqctl add_user test test
+      rabbitmqctl set_user_tags test administrator
+      rabbitmqctl set_permissions -p / test ".*" ".*" ".*"
+      service rabbitmq-server restart
+    SHELL
   end
 end
