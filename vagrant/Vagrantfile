@@ -8,9 +8,9 @@ php_version = "7.2"
 php_xml_apt_package = "php7.2-xml"
 name = "interview-task-2"
 db_name = "interview_task_2"
-ip_address_web = "192.168.2.1"
-ip_address_redis = "192.168.2.2"
-ip_address_rabbitmq = "192.168.2.3"
+ip_address_web = "192.168.2.2"
+ip_address_redis = "192.168.2.3"
+ip_address_rabbitmq = "192.168.2.4"
 
 Vagrant.configure("2") do |config|
   # Set the VM provider
@@ -79,21 +79,14 @@ Vagrant.configure("2") do |config|
     end
 
     devbox.vm.provision "shell" do |s|
-      s.name = "Creating SSL certificate for #{ip_address_web}"
-      s.path = "#{script_dir}/create-ssl-certificate"
-      s.args = [ip_address_web]
-    end
-
-    devbox.vm.provision "shell" do |s|
       s.name = "Creating site at #{ip_address_web} with PHP #{php_version}"
       s.path = "#{script_dir}/serve-nginx"
-      s.args = [ip_address_web, "/vagrant/interview-task-2/public_html", php_version]
+      s.args = ["localhost", "/vagrant/interview-task-2/public_html", php_version]
     end
 
     devbox.vm.provision "shell" do |s|
       s.name = "Restarting nginx"
-      s.inline = "service $1 restart > /dev/null 2>&1"
-      s.args = "nginx"
+      s.inline = "service nginx restart > /dev/null 2>&1"
     end
 
     # Create all the MySQL database
@@ -107,21 +100,31 @@ Vagrant.configure("2") do |config|
       s.name = "Restarting MySQL"
       s.inline = "service mysql restart > /dev/null 2>&1"
     end
-  end
 
-  config.vm.define "redis" do |redis|
-    redis.vm.box = "hashicorp/precise64"
-
-    redis.vm.network "forwarded_port", guest: 6379, host: 6379, auto_correct: true
-    redis.vm.network "private_network", ip: ip_address_redis
-
-    redis.vm.provider "virtualbox" do |v|
+    # configure redis
+    devbox.vm.network "forwarded_port", guest: 6379, host: 6379, auto_correct: true
+    devbox.vm.provider "virtualbox" do |v|
       v.customize ["modifyvm", :id, "--memory", "1024"]
       v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     end
 
-    redis.vm.provision "shell", path: "init.sh"
+    devbox.vm.provision "shell", path: "init.sh"
+
   end
+
+  # config.vm.define "redis" do |redis|
+  #   redis.vm.box = "hashicorp/precise64"
+  #
+  #   redis.vm.network "forwarded_port", guest: 6379, host: 6379, auto_correct: true
+  #   redis.vm.network "private_network", ip: ip_address_redis
+  #
+  #   redis.vm.provider "virtualbox" do |v|
+  #     v.customize ["modifyvm", :id, "--memory", "1024"]
+  #     v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+  #   end
+  #
+  #   redis.vm.provision "shell", path: "init.sh"
+  # end
 
   config.vm.define "rabbitmq" do |rabbitmq|
     rabbitmq.vm.box = "ubuntu/bionic64"
