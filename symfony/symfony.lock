@@ -202,5 +202,8 @@
     },
     "symfony/yaml": {
         "version": "v4.3.1"
+    },
+    "twilio/sdk": {
+        "version": "5.33.0"
     }
 }
