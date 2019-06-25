@@ -31,4 +31,11 @@ class IndexController extends AbstractController
         $smsProducer->publish($value . " (cached)");
         return new Response($value . " (cached)");
     }
+
+    // TODO: Create a route to handle Twilio POST request for updates to message status (requires setting statusCallback when sending the message)
+    // See for details on statusCallback: https://www.twilio.com/docs/sms/api/message-resource#create-a-message-resource
+    // And for the request body format: https://www.twilio.com/docs/sms/twiml#request-parameters
+    // Not rate limited
+    // Uses a new queue to queue up changes or just updates the db from here?
+    // How to make this work with dev setup?
 }
