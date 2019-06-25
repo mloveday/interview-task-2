@@ -1,0 +1,19 @@
+old_sound_rabbit_mq:
+    connections:
+        default:
+            host: '%rabbitmq_host%'
+            user: '%rabbitmq_user%'
+            password: '%rabbitmq_password%'
+    producers:
+        sms:
+            class: App\Producer\SmsProducer
+            connection: default
+            exchange_options:
+                name: sms
+                type: direct
+    consumers:
+        sms:
+            connection:       default
+            exchange_options: {name: 'sms', type: direct}
+            queue_options:    {name: 'sms'}
+            callback:         App\Consumer\SmsConsumer

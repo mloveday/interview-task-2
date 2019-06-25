@@ -6,6 +6,8 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "noxlogic/ratelimit-bundle": "^1.14",
+        "php-amqplib/php-amqplib": "^2.9",
+        "php-amqplib/rabbitmq-bundle": "^1.14",
         "predis/predis": "^1.1",
         "snc/redis-bundle": "^2.1",
         "symfony/console": "4.3.*",
@@ -44,7 +46,8 @@
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
         },
         "post-install-cmd": [
-            "@auto-scripts"
+            "@auto-scripts",
+            {"rabbitmq:setup-fabric": "symfony-cmd"}
         ],
         "post-update-cmd": [
             "@auto-scripts"

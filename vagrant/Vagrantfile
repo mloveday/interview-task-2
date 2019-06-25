@@ -6,6 +6,7 @@ script_dir = File.expand_path("scripts", File.dirname(__FILE__))
 
 php_version = "7.2"
 php_xml_apt_package = "php7.2-xml"
+php_bcmath_apt_package = "php7.2-bcmath"
 name = "interview-task-2"
 db_name = "interview_task_2"
 ip_address_web = "192.168.2.2"
@@ -59,6 +60,11 @@ Vagrant.configure("2") do |config|
       s.name = "Installing PHP xml extension from APT package"
       s.path = "#{script_dir}/install-apt-package"
       s.args = php_xml_apt_package
+    end
+    devbox.vm.provision "shell" do |s|
+      s.name = "Installing PHP bcmath extension from APT package (for rabbitmq)"
+      s.path = "#{script_dir}/install-apt-package"
+      s.args = php_bcmath_apt_package
     end
 
     devbox.vm.provision "shell" do |s|

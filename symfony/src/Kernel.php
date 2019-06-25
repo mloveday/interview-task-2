@@ -2,6 +2,8 @@
 
 namespace App;
 
+use OldSound\RabbitMqBundle\DependencyInjection\Compiler\RegisterPartsPass;
+use OldSound\RabbitMqBundle\DependencyInjection\OldSoundRabbitMqExtension;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileResource;
@@ -34,6 +36,9 @@ class Kernel extends BaseKernel
     {
         $container->addResource(new FileResource($this->getProjectDir().'/config/bundles.php'));
         $container->setParameter('container.dumper.inline_class_loader', true);
+
+        $container->registerExtension(new OldSoundRabbitMqExtension());
+        $container->addCompilerPass(new RegisterPartsPass());
         $confDir = $this->getProjectDir().'/config';
 
         $loader->load($confDir.'/{packages}/*'.self::CONFIG_EXTS, 'glob');
