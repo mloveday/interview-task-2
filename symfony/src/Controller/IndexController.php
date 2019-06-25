@@ -16,7 +16,7 @@ class IndexController extends AbstractController
     const TTL = 10;
 
     /**
-     * @RateLimit(limit=10, period=1)
+     * @RateLimit(limit=1, period=15)
      * @Route("/", name="index")
      */
     public function index(RedisClient $redisClient, SmsProducer $smsProducer)
