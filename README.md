@@ -5,8 +5,10 @@ Allows an SMS to be sent via a form.
 
 ## Usage
 * Install VirtualBox and Vagrant
+* Create a file, `.env.local`, in the symfony directory. Add the following keys and appropriate values: `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_SENDER_NUMBER`, `RECIPIENT_PHONE_NUMBER`
 * Navigate to the `vagrant` directory and run `vagrant up`
 * To start the sms consumer, ssh into the `interview-task-2` vagrant box (`vagrant ssh interview-task-2`), navigate to `/vagrant/interview-task-2/symfony` and run `php bin/console rabbitmq:consumer sms`
+* To send a message, make a GET request (or navigate in your browser) to `http://localhost:8000`
 
 ## Completed Functionality
 * Send a predefined SMS to a predefined number using a GET request (Queues messages with RabbitMQ)

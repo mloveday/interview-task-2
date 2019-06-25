@@ -23,7 +23,7 @@ class SmsConsumer implements ConsumerInterface
     {
         echo $msg->getBody();
         $this->client->messages->create(
-            $_ENV['MY_PHONE_NUMBER'], // TODO replace with number from message
+            $_ENV['RECIPIENT_PHONE_NUMBER'], // TODO replace with number from message
             [
                 'from' => $this->senderNumber,
                 'body' => $msg->getBody(),
