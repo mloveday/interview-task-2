@@ -29,4 +29,9 @@ services:
     Predis\Client:
         class: Predis\Client
         arguments:
-            - { host: '%env(REDIS_HOST)%', port: '%env(REDIS_PORT)%', password: '%env(REDIS_PASSWORD)%' }
+            - { host: '%env(REDIS_HOST)%', port: '%env(REDIS_PORT)%' }
+
+    app.listener.rate_limit_generate_key:
+        class: App\Listener\RateLimitGenerateKeyListener
+        tags:
+            - { name: kernel.event_listener, event: 'ratelimit.generate.key', method: 'onGenerateKey' }

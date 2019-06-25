@@ -2,14 +2,14 @@
 
 cd /tmp
 
-sudo apt-get install -y make gcc
+sudo apt-get install -y make gcc > /dev/null 2>&1
 
-wget http://download.redis.io/redis-stable.tar.gz
-tar xvzf redis-stable.tar.gz
+wget http://download.redis.io/redis-stable.tar.gz > /dev/null 2>&1
+tar xvzf redis-stable.tar.gz > /dev/null 2>&1
 cd redis-stable
 
-make
-sudo make install
+make > /dev/null 2>&1
+sudo make install > /dev/null 2>&1
 
 sudo mkdir /etc/redis
 sudo mkdir -p /var/redis/6379
