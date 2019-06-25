@@ -21,3 +21,5 @@ Allows an SMS to be sent via a form.
 * Serve a page with a list of all SMS messages sent by the system, ordered by newest first
 * Create a user sign-up & login
 * Restrict sending SMS to signed-in users
+* Test it - read up on best practises for RabbitMQ & Rate limiting tests first
+* Run the tests in Travis and display results in Github
