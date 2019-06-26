@@ -11,9 +11,11 @@ Allows an SMS to be sent via a form.
 * To send a message, make a GET request (or navigate in your browser) to `http://localhost:8000`
 
 ## Completed Functionality
-* Send a predefined SMS to a predefined number using a GET request (Queues messages with RabbitMQ)
+* Send an SMS to any number using a GET request (Queues messages with RabbitMQ)
 * Rate limit requests to 1 per 15 seconds (Uses Redis)
 ## To do
+* Error handling
+* Validation of requests
 * Serve a page with a form to enter a message and phone number
 * On submitting the form (via a send button), queue the message to be sent
 * Store all messages sent (body, sender, timestamp, status)

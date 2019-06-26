@@ -3,33 +3,33 @@
 namespace App\Controller;
 
 use App\Producer\SmsProducer;
+use App\Service\MessageSerializationService;
 use Noxlogic\RateLimitBundle\Annotation\RateLimit;
-use Predis\Client as RedisClient;
+use App\Entity\RabbitMq\SmsMessage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class IndexController extends AbstractController
 {
-    const KEY = 'test-key';
-    const TEST_DATA = 'Hello world!';
-    const TTL = 10;
+    // TODO Create a route to serve form
 
     /**
      * @RateLimit(limit=1, period=15)
-     * @Route("/", name="index")
+     * @Route("/", name="postMessage", methods={"POST"})
+     * @param Request $request
+     * @param MessageSerializationService $messageSerializationService
+     * @param SmsProducer $smsProducer
+     * @return Response
      */
-    public function index(RedisClient $redisClient, SmsProducer $smsProducer)
+    public function postMessage(Request $request, MessageSerializationService $messageSerializationService, SmsProducer $smsProducer)
     {
-        if ($redisClient->exists(self::KEY) === 0) {
-            $redisClient->setex(self::KEY, self::TTL, self::TEST_DATA);
-            $value = $redisClient->get(self::KEY);
-            $smsProducer->publish($value . " (set)");
-            return new Response($value . " (set)");
-        }
-        $value = $redisClient->get(self::KEY);
-        $smsProducer->publish($value . " (cached)");
-        return new Response($value . " (cached)");
+        /** @var SmsMessage $message */
+        $message = $messageSerializationService->getDeserializedObject($request->getContent(), SmsMessage::class);
+        // TODO check body is valid, recipient is valid
+        $smsProducer->publish($messageSerializationService->getSerializedObject($message));
+        return new Response("{$message->getBody()} ({$message->getRecipient()})");
     }
 
     // TODO: Create a route to handle Twilio POST request for updates to message status (requires setting statusCallback when sending the message)

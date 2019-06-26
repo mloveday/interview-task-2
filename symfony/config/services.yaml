@@ -40,3 +40,8 @@ services:
             - { name: kernel.event_listener, event: 'ratelimit.generate.key', method: 'onGenerateKey' }
 
     App\Producer\SmsProducer: '@old_sound_rabbit_mq.sms_producer'
+
+    get_set_method_normalizer:
+        class: Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer
+        public: false
+        tags: [serializer.normalizer]
