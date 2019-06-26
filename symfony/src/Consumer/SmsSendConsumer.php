@@ -8,7 +8,7 @@ use App\Service\TwilioClient;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 
-class SmsConsumer implements ConsumerInterface
+class SmsSendConsumer implements ConsumerInterface
 {
     /** @var TwilioClient */
     private $client;
@@ -29,7 +29,7 @@ class SmsConsumer implements ConsumerInterface
         // TODO handle exceptions deserializing data (this should not happen as it's converted to an SmsMessage object before sending)
         /** @var SmsMessage $message */
         $message = $this->serializationService->getDeserializedObject($msg->getBody(), SmsMessage::class);
-        echo "To {$message->getRecipient()}: {$message->getBody()}\n";
+        echo "Sending SMS to {$message->getRecipient()}: {$message->getBody()}\n";
         // TODO handle exception when sending messages
         $this->client->messages->create(
             $message->getRecipient(),

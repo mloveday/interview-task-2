@@ -8,12 +8,15 @@ old_sound_rabbit_mq:
         sms:
             class: App\Producer\SmsProducer
             connection: default
-            exchange_options:
-                name: sms
-                type: direct
-    consumers:
+            exchange_options: {name: sms_exchange, type: fanout}
+    multiple_consumers:
         sms:
             connection:       default
-            exchange_options: {name: 'sms', type: direct}
-            queue_options:    {name: 'sms'}
-            callback:         App\Consumer\SmsConsumer
+            exchange_options: {name: sms_exchange, type: fanout}
+            queues:
+                sms_send:
+                    name: sms_send_queue
+                    callback:         App\Consumer\SmsSendConsumer
+                sms_store:
+                    name: sms_store_queue
+                    callback:         App\Consumer\SmsStoreConsumer
