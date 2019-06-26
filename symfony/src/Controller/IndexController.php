@@ -28,9 +28,7 @@ class IndexController extends AbstractController
     {
         $form = $formBuilder->createSmsMessageForm()->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var SmsMessageRequest $message */
-            $message = $form->getData();
-            $smsProducer->publish($messageSerializationService->getSerializedObject($message));
+            $smsProducer->publish($messageSerializationService->getSerializedObject($form->getData()));
         }
         return $this->renderFormResponse($form);
     }
