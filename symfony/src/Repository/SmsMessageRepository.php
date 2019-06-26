@@ -19,6 +19,11 @@ class SmsMessageRepository extends ServiceEntityRepository
         parent::__construct($registry, SmsMessage::class);
     }
 
+    public function findAllSortedByTimeDesc()
+    {
+        return $this->findBy([], ['timestamp_sent' => 'DESC']);
+    }
+
     // /**
     //  * @return SmsMessage[] Returns an array of SmsMessage objects
     //  */

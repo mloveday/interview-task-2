@@ -58,6 +58,11 @@ class SmsMessage
         return $this;
     }
 
+    public function getTimestampString(): string
+    {
+        return $this->getTimestampSent()->format('d/m/Y H:i:s');
+    }
+
     public function getTimestampSent(): ?\DateTimeInterface
     {
         return $this->timestamp_sent;
@@ -67,14 +72,5 @@ class SmsMessage
     {
         $this->timestamp_sent = $timestamp_sent;
         return $this;
-    }
-
-    public function serialise()
-    {
-        return (object) [
-            'recipient' => $this->getRecipient(),
-            'body' => $this->getBody(),
-            'timestamp_sent' => $this->getTimestampSent(),
-        ];
     }
 }

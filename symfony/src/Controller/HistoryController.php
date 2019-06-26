@@ -17,8 +17,6 @@ class HistoryController extends AbstractController
      */
     public function history(SmsMessageRepository $messageRepository)
     {
-        return new Response(json_encode(
-            array_map(function (SmsMessage $message) {return $message->serialise();}, $messageRepository->findAll())
-        ));
+        return $this->render('history/history.html.twig', ['messages' => $messageRepository->findAllSortedByTimeDesc()]);
     }
 }

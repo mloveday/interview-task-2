@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="index-content">
+        <h2>SMS history</h2>
+        <table>
+            <thead>
+                <tr>
+                    <td>Timestamp</td>
+                    <td>Recipient</td>
+                    <td>Message body</td>
+                </tr>
+            </thead>
+            <tbody>
+            {% for message in messages %}
+                <tr>
+                    <td>{{ message.timestampString }}</td>
+                    <td>{{ message.recipient }}</td>
+                    <td>{{ message.body }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
