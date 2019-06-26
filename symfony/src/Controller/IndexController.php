@@ -2,34 +2,58 @@
 
 namespace App\Controller;
 
+use App\Entity\RabbitMq\SmsMessage;
 use App\Producer\SmsProducer;
+use App\Service\Form\SmsMessageFormBuilder;
 use App\Service\MessageSerializationService;
 use Noxlogic\RateLimitBundle\Annotation\RateLimit;
-use App\Entity\RabbitMq\SmsMessage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class IndexController extends AbstractController
 {
-    // TODO Create a route to serve form
-
     /**
-     * @RateLimit(limit=1, period=15)
-     * @Route("/", name="postMessage", methods={"POST"})
+     * @RateLimit(limit=1, period=15, methods="POST")
+     * @Route("/", name="sendMessage", methods={"POST"})
      * @param Request $request
      * @param MessageSerializationService $messageSerializationService
      * @param SmsProducer $smsProducer
+     * @param SmsMessageFormBuilder $formBuilder
      * @return Response
      */
-    public function postMessage(Request $request, MessageSerializationService $messageSerializationService, SmsProducer $smsProducer)
+    public function sendMessage(Request $request, MessageSerializationService $messageSerializationService, SmsProducer $smsProducer, SmsMessageFormBuilder $formBuilder)
     {
-        /** @var SmsMessage $message */
-        $message = $messageSerializationService->getDeserializedObject($request->getContent(), SmsMessage::class);
-        // TODO check body is valid, recipient is valid
-        $smsProducer->publish($messageSerializationService->getSerializedObject($message));
-        return new Response("{$message->getBody()} ({$message->getRecipient()})");
+        $form = $formBuilder->createSmsMessageForm()->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var SmsMessage $message */
+            $message = $form->getData();
+            // TODO check body is valid, recipient is valid
+            $smsProducer->publish($messageSerializationService->getSerializedObject($message));
+        }
+        return $this->renderFormResponse($form);
+    }
+
+    /**
+     * @Route("/", name="renderSendMessageForm", methods={"GET"})
+     * @param SmsMessageFormBuilder $formBuilder
+     * @return Response
+     */
+    public function renderSendMessageForm(SmsMessageFormBuilder $formBuilder)
+    {
+        $form = $formBuilder->createSmsMessageForm();
+        return $this->renderFormResponse($form);
+    }
+
+    /**
+     * @param FormInterface $form
+     * @return Response
+     */
+    private function renderFormResponse(FormInterface $form): Response
+    {
+        return $this->render('index/send-message.html.twig', ['form' => $form->createView()]);
     }
 
     // TODO: Create a route to handle Twilio POST request for updates to message status (requires setting statusCallback when sending the message)
