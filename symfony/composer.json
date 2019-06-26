@@ -21,7 +21,8 @@
         "symfony/twig-bundle": "4.3.*",
         "symfony/validator": "4.3.*",
         "symfony/yaml": "4.3.*",
-        "twilio/sdk": "^5.33"
+        "twilio/sdk": "^5.33",
+        "ext-json": "*"
     },
     "config": {
         "preferred-install": {

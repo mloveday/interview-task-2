@@ -2,7 +2,7 @@
 
 namespace App\Consumer;
 
-use App\Entity\RabbitMq\SmsMessage;
+use App\Entity\RabbitMq\SmsMessageRequest;
 use App\Service\MessageSerializationService;
 use App\Service\TwilioClient;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
@@ -27,8 +27,8 @@ class SmsSendConsumer implements ConsumerInterface
     public function execute(AMQPMessage $msg)
     {
         // TODO handle exceptions deserializing data (this should not happen as it's converted to an SmsMessage object before sending)
-        /** @var SmsMessage $message */
-        $message = $this->serializationService->getDeserializedObject($msg->getBody(), SmsMessage::class);
+        /** @var SmsMessageRequest $message */
+        $message = $this->serializationService->getDeserializedObject($msg->getBody(), SmsMessageRequest::class);
         echo "Sending SMS to {$message->getRecipient()}: {$message->getBody()}\n";
         // TODO handle exception when sending messages
         $this->client->messages->create(

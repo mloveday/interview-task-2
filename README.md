@@ -16,10 +16,10 @@ Allows an SMS to be sent via a form.
 * Serve a page with a form to enter a message and phone number
 * On submitting the form (via a send button), queue the message to be sent
 * Validation of requests (limit sms body to 140 chars, limit recipient to UK mobile number)
+* Store all messages sent (body, sender, timestamp)
 ## To do
 * Error handling
-* Store all messages sent (body, sender, timestamp, status)
-* Store & update the status of the SMS (queued, sent, failed). Note this will update after 
+* Store & update the status of the SMS (queued, sent, failed). Note this will update after the initial message is sent
 * Serve a page with a list of all SMS messages sent by the system, ordered by newest first
 * Create a user sign-up & login
 * Restrict sending SMS to signed-in users

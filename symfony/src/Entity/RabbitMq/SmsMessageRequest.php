@@ -4,7 +4,7 @@ namespace App\Entity\RabbitMq;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SmsMessage
+class SmsMessageRequest
 {
     /**
      * @var string
@@ -29,7 +29,7 @@ class SmsMessage
 
     /**
      * @param string $recipient
-     * @return SmsMessage
+     * @return SmsMessageRequest
      */
     public function setRecipient(string $recipient): self
     {
@@ -47,7 +47,7 @@ class SmsMessage
 
     /**
      * @param string $body
-     * @return SmsMessage
+     * @return SmsMessageRequest
      */
     public function setBody(string $body): self
     {

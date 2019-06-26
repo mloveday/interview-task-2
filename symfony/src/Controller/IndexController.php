@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\RabbitMq\SmsMessage;
+use App\Entity\RabbitMq\SmsMessageRequest;
 use App\Producer\SmsProducer;
 use App\Service\Form\SmsMessageFormBuilder;
 use App\Service\MessageSerializationService;
@@ -28,7 +28,7 @@ class IndexController extends AbstractController
     {
         $form = $formBuilder->createSmsMessageForm()->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var SmsMessage $message */
+            /** @var SmsMessageRequest $message */
             $message = $form->getData();
             $smsProducer->publish($messageSerializationService->getSerializedObject($message));
         }
