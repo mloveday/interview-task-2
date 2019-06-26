@@ -15,9 +15,9 @@ Allows an SMS to be sent via a form.
 * Rate limit requests to 1 per 15 seconds (Uses Redis)
 * Serve a page with a form to enter a message and phone number
 * On submitting the form (via a send button), queue the message to be sent
+* Validation of requests (limit sms body to 140 chars, limit recipient to UK mobile number)
 ## To do
 * Error handling
-* Validation of requests
 * Store all messages sent (body, sender, timestamp, status)
 * Store & update the status of the SMS (queued, sent, failed). Note this will update after 
 * Serve a page with a list of all SMS messages sent by the system, ordered by newest first

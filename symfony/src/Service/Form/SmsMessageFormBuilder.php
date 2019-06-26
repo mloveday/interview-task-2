@@ -5,6 +5,7 @@ namespace App\Service\Form;
 use App\Entity\RabbitMq\SmsMessage;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormFactoryInterface;
 
@@ -27,7 +28,7 @@ class SmsMessageFormBuilder
         $message = (new SmsMessage())->setBody('')->setRecipient('');
         return $this->formFactory->createNamedBuilder(null, FormType::class, $message, [])
             ->add('recipient', TextType::class)
-            ->add('body', TextType::class)
+            ->add('body', TextareaType::class)
             ->add('send', SubmitType::class, ['label' => 'Send SMS'])
             ->getForm();
     }

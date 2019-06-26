@@ -30,7 +30,6 @@ class IndexController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var SmsMessage $message */
             $message = $form->getData();
-            // TODO check body is valid, recipient is valid
             $smsProducer->publish($messageSerializationService->getSerializedObject($message));
         }
         return $this->renderFormResponse($form);

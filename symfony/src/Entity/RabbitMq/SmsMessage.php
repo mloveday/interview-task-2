@@ -2,11 +2,21 @@
 
 namespace App\Entity\RabbitMq;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 class SmsMessage
 {
-    /** @var string */
+    /**
+     * @var string
+     * @Assert\NotBlank
+     * @Assert\Regex(pattern="/^(\+44|07)\d{9}$/", message="Recipient needs to be a UK mobile number starting 07 or +44 followed by 9 digits, e.g. 07123456789 or +44123456789")
+     */
     private $recipient;
-    /** @var string */
+    /**
+     * @var string
+     * @Assert\NotBlank
+     * @Assert\Length(max = 140, maxMessage = "Your message is too long, it must be no more than {{ limit }} characters")
+     */
     private $body;
 
     /**
