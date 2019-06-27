@@ -9,6 +9,12 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class SmsMessage
 {
+    const STATUS_QUEUED = 'queued';
+    const STATUS_SENT = 'sent';
+    const STATUS_DELIVERED = 'delivered';
+    const STATUS_UNDELIVERED = 'undelivered';
+    const STATUS_FAILED = 'failed';
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -30,6 +36,11 @@ class SmsMessage
      * @ORM\Column(type="datetime")
      */
     private $timestamp_sent;
+
+    /**
+     * @ORM\Column(type="string", length=11, columnDefinition="enum('queued', 'sent', 'delivered', 'undelivered', 'failed')")
+     */
+    private $status;
 
     public function getId(): ?int
     {
@@ -71,6 +82,17 @@ class SmsMessage
     public function setTimestampSent(\DateTimeInterface $timestamp_sent): self
     {
         $this->timestamp_sent = $timestamp_sent;
+        return $this;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    public function setStatus($status): self
+    {
+        $this->status = $status;
         return $this;
     }
 }

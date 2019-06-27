@@ -36,6 +36,7 @@ class SmsStoreConsumer implements ConsumerInterface
             ->setRecipient($message->getRecipient())
             ->setBody($message->getBody())
             ->setTimestampSent(new \DateTime())
+            ->setStatus(SmsMessage::STATUS_QUEUED)
         );
     }
 
