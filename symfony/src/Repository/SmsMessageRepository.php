@@ -21,7 +21,12 @@ class SmsMessageRepository extends ServiceEntityRepository
 
     public function findAllSortedByTimeDesc()
     {
-        return $this->findBy([], ['timestamp_sent' => 'DESC']);
+        return $this->findBy([], ['date_sent' => 'DESC']);
+    }
+
+    public function findBySid(string $sid)
+    {
+        return $this->findOneBy(['sid' => $sid]);
     }
 
     // /**

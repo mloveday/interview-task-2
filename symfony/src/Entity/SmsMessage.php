@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -35,12 +36,27 @@ class SmsMessage
     /**
      * @ORM\Column(type="datetime")
      */
-    private $timestamp_sent;
+    private $date_created;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $date_updated;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $date_sent;
 
     /**
      * @ORM\Column(type="string", length=11, columnDefinition="enum('queued', 'sent', 'delivered', 'undelivered', 'failed')")
      */
     private $status;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $sid;
 
     public function getId(): ?int
     {
@@ -69,19 +85,41 @@ class SmsMessage
         return $this;
     }
 
-    public function getTimestampString(): string
+    public function getDateCreated(): ?DateTimeInterface
     {
-        return $this->getTimestampSent()->format('d/m/Y H:i:s');
+        return $this->date_created;
     }
 
-    public function getTimestampSent(): ?\DateTimeInterface
+    public function setDateCreated($date_created): self
     {
-        return $this->timestamp_sent;
+        $this->date_created = $date_created;
+        return $this;
     }
 
-    public function setTimestampSent(\DateTimeInterface $timestamp_sent): self
+    public function getDateUpdated(): ?DateTimeInterface
     {
-        $this->timestamp_sent = $timestamp_sent;
+        return $this->date_updated;
+    }
+
+    public function setDateUpdated($date_updated): self
+    {
+        $this->date_updated = $date_updated;
+        return $this;
+    }
+
+    public function getDateSentString(): string
+    {
+        return $this->getDateSent()->format('d/m/Y H:i:s');
+    }
+
+    public function getDateSent(): ?DateTimeInterface
+    {
+        return $this->date_sent;
+    }
+
+    public function setDateSent(DateTimeInterface $timestamp_sent): self
+    {
+        $this->date_sent = $timestamp_sent;
         return $this;
     }
 
@@ -93,6 +131,17 @@ class SmsMessage
     public function setStatus($status): self
     {
         $this->status = $status;
+        return $this;
+    }
+
+    public function getSid(): string
+    {
+        return $this->sid;
+    }
+
+    public function setSid($sid): self
+    {
+        $this->sid = $sid;
         return $this;
     }
 }

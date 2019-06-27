@@ -5,18 +5,31 @@ old_sound_rabbit_mq:
             user: '%rabbitmq_user%'
             password: '%rabbitmq_password%'
     producers:
-        sms:
-            class: App\Producer\SmsProducer
+        sms_send:
+            class: App\Producer\SmsSendProducer
             connection: default
-            exchange_options: {name: sms_exchange, type: fanout}
-    multiple_consumers:
-        sms:
+            exchange_options: {name: sms_send_ex, type: direct}
+        sms_store:
+            class: App\Producer\SmsStoreProducer
+            connection: default
+            exchange_options: {name: sms_store_ex, type: direct}
+        sms_update:
+            class: App\Producer\SmsUpdateProducer
+            connection: default
+            exchange_options: {name: sms_update_ex, type: direct}
+    consumers:
+        sms_send:
             connection:       default
-            exchange_options: {name: sms_exchange, type: fanout}
-            queues:
-                sms_send:
-                    name: sms_send_queue
-                    callback:         App\Consumer\SmsSendConsumer
-                sms_store:
-                    name: sms_store_queue
-                    callback:         App\Consumer\SmsStoreConsumer
+            exchange_options: {name: sms_send_ex, type: direct}
+            queue_options:    {name: sms_send}
+            callback:         App\Consumer\SmsSendConsumer
+        sms_store:
+            connection:       default
+            exchange_options: {name: sms_store_ex, type: direct}
+            queue_options:    {name: sms_store}
+            callback:         App\Consumer\SmsStoreConsumer
+        sms_update:
+            connection:       default
+            exchange_options: {name: sms_update_ex, type: direct}
+            queue_options:    {name: sms_update}
+            callback:         App\Consumer\SmsUpdateConsumer

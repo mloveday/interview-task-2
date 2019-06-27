@@ -2,8 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\RabbitMq\SmsMessageRequest;
-use App\Producer\SmsProducer;
+use App\Entity\RabbitMq\TwilioUpdateCallbackBody;
+use App\Producer\SmsSendProducer;
+use App\Producer\SmsUpdateProducer;
 use App\Service\Form\SmsMessageFormBuilder;
 use App\Service\MessageSerializationService;
 use Noxlogic\RateLimitBundle\Annotation\RateLimit;
@@ -20,11 +21,11 @@ class IndexController extends AbstractController
      * @Route("/", name="sendMessage", methods={"POST"})
      * @param Request $request
      * @param MessageSerializationService $messageSerializationService
-     * @param SmsProducer $smsProducer
+     * @param SmsSendProducer $smsProducer
      * @param SmsMessageFormBuilder $formBuilder
      * @return Response
      */
-    public function sendMessage(Request $request, MessageSerializationService $messageSerializationService, SmsProducer $smsProducer, SmsMessageFormBuilder $formBuilder)
+    public function sendMessage(Request $request, MessageSerializationService $messageSerializationService, SmsSendProducer $smsProducer, SmsMessageFormBuilder $formBuilder)
     {
         $form = $formBuilder->createSmsMessageForm()->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -53,10 +54,15 @@ class IndexController extends AbstractController
         return $this->render('index/send-message.html.twig', ['form' => $form->createView()]);
     }
 
-    // TODO: Create a route to handle Twilio POST request for updates to message status (requires setting statusCallback when sending the message)
-    // See for details on statusCallback: https://www.twilio.com/docs/sms/api/message-resource#create-a-message-resource
-    // And for the request body format: https://www.twilio.com/docs/sms/twiml#request-parameters
-    // Not rate limited
-    // Uses a new queue to queue up changes or just updates the db from here?
-    // How to make this work with dev setup?
+    /*
+     * @Route("/twilio-callback", methods={"POST"})
+     */
+    public function messageStatusCallback(Request $request, MessageSerializationService $messageSerializationService, SmsUpdateProducer $smsUpdateProducer): Response
+    {
+        // TODO test this with twilio callback - work out how to do this on dev machine first
+        /** @var TwilioUpdateCallbackBody $updateBody */
+        $updateBody = $messageSerializationService->getDeserializedObject($request->getContent(), TwilioUpdateCallbackBody::class);
+        $smsUpdateProducer->publish($messageSerializationService->getSerializedObject($updateBody));
+        return new Response();
+    }
 }

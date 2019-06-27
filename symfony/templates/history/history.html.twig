@@ -14,7 +14,7 @@
             <tbody>
             {% for message in messages %}
                 <tr>
-                    <td>{{ message.timestampString }}</td>
+                    <td>{{ message.getDateSentString }}</td>
                     <td>{{ message.recipient }}</td>
                     <td>{{ message.body }}</td>
                 </tr>

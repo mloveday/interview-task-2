@@ -20,7 +20,7 @@ Allows an SMS to be sent via a form.
 * Serve a page with a list of all SMS messages sent by the system, ordered by newest first
 ## To do
 * Error handling
-* Store & update the status of the SMS (queued, sent, failed). Note this will update after the initial message is sent
+* Store & update the status of the SMS (queued, sent, failed). Note this will update after the initial message is sent (in progress)
 * Create a user sign-up & login
 * Restrict sending SMS to signed-in users
 * Test it - read up on best practises for RabbitMQ & Rate limiting tests first

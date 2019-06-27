@@ -39,8 +39,15 @@ services:
         tags:
             - { name: kernel.event_listener, event: 'ratelimit.generate.key', method: 'onGenerateKey' }
 
-    App\Producer\SmsProducer: '@old_sound_rabbit_mq.sms_producer'
+    App\Producer\SmsSendProducer: '@old_sound_rabbit_mq.sms_send_producer'
+    App\Producer\SmsStoreProducer: '@old_sound_rabbit_mq.sms_store_producer'
+    App\Producer\SmsUpdateProducer: '@old_sound_rabbit_mq.sms_update_producer'
 
+    datetime_normalizer:
+        class: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer
+        public: false
+        tags:
+            - { name: serializer.normalizer }
     get_set_method_normalizer:
         class: Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer
         public: false

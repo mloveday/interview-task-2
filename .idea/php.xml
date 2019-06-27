@@ -76,6 +76,7 @@
       <path value="$PROJECT_DIR$/symfony/vendor/doctrine/doctrine-cache-bundle" />
       <path value="$PROJECT_DIR$/symfony/vendor/nikic/php-parser" />
       <path value="$PROJECT_DIR$/symfony/vendor/symfony/maker-bundle" />
+      <path value="$PROJECT_DIR$/symfony/vendor/symfony/property-info" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.2" />

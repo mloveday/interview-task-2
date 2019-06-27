@@ -30,6 +30,30 @@ Vagrant.configure("2") do |config|
   # Enable SSH agent forwarding
   config.ssh.forward_agent = true
 
+  config.vm.define "rabbitmq" do |rabbitmq|
+    rabbitmq.vm.box = "ubuntu/bionic64"
+    rabbitmq.vm.network "forwarded_port", guest: 5672, host: 5672
+    rabbitmq.vm.network "forwarded_port", guest: 15672, host: 15672
+    rabbitmq.vm.network "private_network", ip: ip_address_rabbitmq
+    # TODO: check all of this shell script is necessary, particularly getting the keys and updating apt
+    rabbitmq.vm.provision "shell", inline: <<-SHELL
+      sudo apt-key adv --keyserver "hkps.pool.sks-keyservers.net" --recv-keys "0x6B73A36E6026DFCA"
+      sudo apt-get install apt-transport-https
+      sudo apt-get update -y
+      echo 'deb http://www.rabbitmq.com/debian/ testing main' >/etc/apt/sources.list.d/rabbitmq.list
+      wget -O - "https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc" | sudo apt-key add -
+      wget http://www.rabbitmq.com/rabbitmq-signing-key-public.asc | apt-key add -
+      wget -O - "https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey" | sudo apt-key add -
+      apt-get update
+      apt-get install -q -y rabbitmq-server
+      rabbitmq-plugins enable rabbitmq_management
+      rabbitmqctl add_user test test
+      rabbitmqctl set_user_tags test administrator
+      rabbitmqctl set_permissions -p / test ".*" ".*" ".*"
+      service rabbitmq-server restart
+    SHELL
+  end
+
   # Configure the vagrant box
   config.vm.define name do |devbox|
     devbox.vm.hostname = name
@@ -72,11 +96,6 @@ Vagrant.configure("2") do |config|
       s.inline = "service php#{php_version}-fpm restart > /dev/null 2>&1"
     end
 
-    devbox.vm.provision "shell" do |s|
-      s.name = "Installing composer dependencies"
-      s.inline = "composer install -d /vagrant/interview-task-2/symfony"
-    end
-
     if devbox.vm.box == "damianlewis/ubuntu-16.04-lemp"
       devbox.vm.provision "shell", run: "always" do |s|
         s.name = "Starting Nginx"
@@ -116,43 +135,21 @@ Vagrant.configure("2") do |config|
 
     devbox.vm.provision "shell", path: "init.sh"
 
+    devbox.vm.provision "shell" do |s|
+      s.name = "Installing composer dependencies"
+      s.inline = "composer install -d /vagrant/interview-task-2/symfony"
+    end
+
+    devbox.vm.provision "shell" do |s|
+      s.name = "Migrating database"
+      s.inline = "php /vagrant/interview-task-2/symfony/bin/console doctrine:migrations:migrate --no-interaction"
+    end
+
+    devbox.vm.provision "shell" do |s|
+      s.name = "Migrating database"
+      s.inline = "php /vagrant/interview-task-2/symfony/bin/console rabbitmq:setup-fabric"
+    end
+
   end
 
-  # config.vm.define "redis" do |redis|
-  #   redis.vm.box = "hashicorp/precise64"
-  #
-  #   redis.vm.network "forwarded_port", guest: 6379, host: 6379, auto_correct: true
-  #   redis.vm.network "private_network", ip: ip_address_redis
-  #
-  #   redis.vm.provider "virtualbox" do |v|
-  #     v.customize ["modifyvm", :id, "--memory", "1024"]
-  #     v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-  #   end
-  #
-  #   redis.vm.provision "shell", path: "init.sh"
-  # end
-
-  config.vm.define "rabbitmq" do |rabbitmq|
-    rabbitmq.vm.box = "ubuntu/bionic64"
-    rabbitmq.vm.network "forwarded_port", guest: 5672, host: 5672
-    rabbitmq.vm.network "forwarded_port", guest: 15672, host: 15672
-    rabbitmq.vm.network "private_network", ip: ip_address_rabbitmq
-    # TODO: check all of this shell script is necessary, particularly getting the keys and updating apt
-    rabbitmq.vm.provision "shell", inline: <<-SHELL
-      sudo apt-key adv --keyserver "hkps.pool.sks-keyservers.net" --recv-keys "0x6B73A36E6026DFCA"
-      sudo apt-get install apt-transport-https
-      sudo apt-get update -y
-      echo 'deb http://www.rabbitmq.com/debian/ testing main' >/etc/apt/sources.list.d/rabbitmq.list
-      wget -O - "https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc" | sudo apt-key add -
-      wget http://www.rabbitmq.com/rabbitmq-signing-key-public.asc | apt-key add -
-      wget -O - "https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey" | sudo apt-key add -
-      apt-get update
-      apt-get install -q -y rabbitmq-server
-      rabbitmq-plugins enable rabbitmq_management
-      rabbitmqctl add_user test test
-      rabbitmqctl set_user_tags test administrator
-      rabbitmqctl set_permissions -p / test ".*" ".*" ".*"
-      service rabbitmq-server restart
-    SHELL
-  end
 end
